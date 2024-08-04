@@ -12,6 +12,8 @@ export const useLogin = () => {
             const { password: _, ...authData } = await login(email, password);
 
            changeAuthState(authData);
+
+           return authData;
     };
 
     return loginHandler;
@@ -24,6 +26,8 @@ export const useRegister = () => {
         const { password: _, ...authData } = await register(email, password);
 
         changeAuthState(authData);
+
+        return authData;
     };
 
     return registerHandler;
