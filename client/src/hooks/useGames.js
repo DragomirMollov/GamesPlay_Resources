@@ -1,3 +1,4 @@
+/* eslint-disable arrow-parens */
 import { useEffect, useState } from 'react';
 import gamesAPI from '../api/games-api';
 
@@ -36,4 +37,10 @@ export function useGetOneGames(gameId) {
         game,
         setGame,
     ];
+};
+
+export function useCreateGames() {
+    const gameCreateHandler = (gameData) => gamesAPI.create(gameData);
+
+    return gameCreateHandler;
 };
