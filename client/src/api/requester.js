@@ -1,4 +1,5 @@
 /* eslint-disable style/indent */
+
 async function requester(method, url, data) {
     const options = {};
 
