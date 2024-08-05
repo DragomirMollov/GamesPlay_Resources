@@ -12,8 +12,10 @@ const initialValues = {
 export default function GameDetails() {
     const [error, setError] = useState('');
     const { gameId } = useParams();
-    const [comments, setComments] = useGetAllComents(gameId);
+    const [comments, dispatch] = useGetAllComents(gameId);
+    // const [comments, setComments] = useGetAllComents(gameId);
     const createComment = useCreateComment();
+    const { email } = useAuthContext();
     const [game] = useGetOneGames(gameId);
     const { isAuthenticated } = useAuthContext();
     const {
@@ -24,7 +26,8 @@ export default function GameDetails() {
         try {
             const newComment = await createComment(gameId, comment);
 
-            setComments(oldComments => [...oldComments, newComment]);
+            // setComments(oldComments => [...oldComments, newComment]);
+            dispatch({type: 'ADD_COMMENT', payload: {...newComment, author: { email }}});
         } catch (error) {
             setError(error.message);
         };
