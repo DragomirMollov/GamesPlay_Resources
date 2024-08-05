@@ -16,6 +16,7 @@ function App() {
         <AuthContextProvider>
             <div id="box">
                 <Header />
+                
                 <main id="main-content">
                     <Routes>
                         <Route path="/" element={<Home />} />

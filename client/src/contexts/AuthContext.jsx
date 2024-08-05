@@ -3,6 +3,8 @@
 /* eslint-disable style/indent */
 import { createContext, useContext, useState } from 'react';
 
+import usePersisterdState from '../hooks/usePersistedState';
+
 export const AuthContext = createContext({
     userId: '',
     email: '',
@@ -12,7 +14,8 @@ export const AuthContext = createContext({
 });
 
 export function AuthContextProvider(props) {
-    const [authState, setAuthState] = useState({});
+    //const [authState, setAuthState] = useState({});
+    const [authState, setAuthState] = usePersisterdState('auth', {});
 
     const changeAuthState = (state) => {
         localStorage.setItem('accessToken', state.accessToken);
