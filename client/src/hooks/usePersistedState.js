@@ -8,8 +8,8 @@ export default function usePersisterdState(key, initialState) {
 
         if (!persistedAuth) {
             return typeof initialState === 'function'
-            ? initialState()
-            : initialState;
+                ? initialState()
+                : initialState;
         };
 
         const authData = JSON.parse(persistedAuth);
@@ -19,13 +19,13 @@ export default function usePersisterdState(key, initialState) {
 
     const updateState = (value) => {
         const newState = typeof value === 'function'
-        ? value(state)
-        : value;
+            ? value(state)
+            : value;
 
-    localStorage.setItem(key, JSON.stringify(newState));
+        localStorage.setItem(key, JSON.stringify(newState));
 
         setState(newState);
     };
 
-    return[state, updateState];
+    return [state, updateState];
 };

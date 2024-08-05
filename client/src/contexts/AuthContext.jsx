@@ -11,24 +11,28 @@ export const AuthContext = createContext({
     accessToken: '',
     isAuthenticated: false,
     changeAuthState: (authState = {}) => null,
+    logout: () => null,
 });
 
 export function AuthContextProvider(props) {
-    //const [authState, setAuthState] = useState({});
     const [authState, setAuthState] = usePersisterdState('auth', {});
 
     const changeAuthState = (state) => {
-        localStorage.setItem('accessToken', state.accessToken);
 
         setAuthState(state);
     };
 
+    const logout = () => {
+        setAuthState(null);
+    };
+
     const contextData = {
-        userid: authState._id,
-        email: authState.email,
-        accessToken: authState.accessToken,
-        isAuthenticated: !!authState.email,
+        userid: authState?._id,
+        email: authState?.email,
+        accessToken: authState?.accessToken,
+        isAuthenticated: !!authState?.email,
         changeAuthState,
+        logout,
     };
 
     return (

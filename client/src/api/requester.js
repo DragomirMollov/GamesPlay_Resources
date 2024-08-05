@@ -1,8 +1,13 @@
 /* eslint-disable style/brace-style */
+
+import { getAccessToken } from '../utils/authUtils';
+
 /* eslint-disable style/indent */
 async function requester(method, url, data) {
     const options = {};
-    const accessToken = localStorage.getItem('accessToken');
+
+    const accessToken = getAccessToken();
+
     console.log('Access Token:', accessToken); // Debugging line
 
     if (accessToken) {
@@ -32,6 +37,10 @@ async function requester(method, url, data) {
 
     try {
         const response = await fetch(url, options);
+        if (response.status === 204) {
+            return;
+        };
+
         const result = await response.json();
 
         if (!response.ok) {
