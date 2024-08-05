@@ -3,14 +3,16 @@ import { useGetOneGames } from "../../hooks/useGames";
 import { useForm } from "../../hooks/useForm";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { useCreateComment, useGetAllComents } from "../../hooks/useComments";
+import { useState } from "react";
 
 const initialValues = {
     comment: '',
 };
 
 export default function GameDetails() {
+    const [error, setError] = useState('');
     const { gameId } = useParams();
-    const [comments, serComments] = useGetAllComents(gameId);
+    const [comments, setComments] = useGetAllComents(gameId);
     const createComment = useCreateComment();
     const [game] = useGetOneGames(gameId);
     const { isAuthenticated } = useAuthContext();
@@ -18,8 +20,14 @@ export default function GameDetails() {
         values,
         changeHandler,
         submitHandler,
-    } = useForm(initialValues, ({ comment }) => {
-        createComment(gameId, comment);
+    } = useForm(initialValues, async ({ comment }) => {
+        try {
+            const newComment = await createComment(gameId, comment);
+
+            setComments(oldComments => [...oldComments, newComment]);
+        } catch (error) {
+            setError(error.message);
+        };
     });
 
     return (
@@ -40,14 +48,14 @@ export default function GameDetails() {
                 <div className="details-comments">
                     <h2>Comments:</h2>
                     <ul>
-                        {comments.map(coment => (
-                                <li key={coment._id} className="comment">
-                                    <p>Username: {coment.text}</p>
+                        {comments.map(comment => (
+                                <li key={comment._id} className="comment">
+                                    <p>{comment.author.email}: {comment.text}</p>
                                 </li>
                             ))
                         }
                     </ul>
-                    
+
                     {comments.length === 0 && <p className="no-comment">No comments.</p>}
                 </div>
 
