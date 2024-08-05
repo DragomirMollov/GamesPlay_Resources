@@ -1,3 +1,4 @@
+/* eslint-disable style/brace-style */
 /* eslint-disable style/keyword-spacing */
 /* eslint-disable style/indent */
 import { useState } from 'react';
@@ -22,7 +23,11 @@ export default function usePersisterdState(key, initialState) {
             ? value(state)
             : value;
 
-        localStorage.setItem(key, JSON.stringify(newState));
+        if (newState === null || newState === undefined) {
+            localStorage.removeItem(key);
+        } else {
+            localStorage.setItem(key, JSON.stringify(newState));
+        };
 
         setState(newState);
     };

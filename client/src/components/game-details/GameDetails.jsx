@@ -1,30 +1,26 @@
-import { useState } from "react";
 import { useParams } from "react-router-dom";
-import commentApi from "../../api/comment-api";
 import { useGetOneGames } from "../../hooks/useGames";
+import { useForm } from "../../hooks/useForm";
+import { useAuthContext } from "../../contexts/AuthContext";
+import { useCreateComment, useGetAllComents } from "../../hooks/useComments";
+
+const initialValues = {
+    comment: '',
+};
 
 export default function GameDetails() {
     const { gameId } = useParams();
-    const [game, setGame] = useGetOneGames(gameId);
-    const [username, setUsername] = useState('');
-    const [comment, setComment] = useState('');
-
-    const commentSubmittHandler = async (e) => {
-        e.preventDefault();
-
-        const newComment = await commentApi.create(gameId, username, comment);
-
-        setGame(oldState => ({
-            ...oldState,
-            comments: {
-                ...oldState.comments,
-                [newComment._id]: newComment,
-            }
-        }));
-
-        setUsername('');
-        setComment('');
-    };
+    const [comments, serComments] = useGetAllComents(gameId);
+    const createComment = useCreateComment();
+    const [game] = useGetOneGames(gameId);
+    const { isAuthenticated } = useAuthContext();
+    const {
+        values,
+        changeHandler,
+        submitHandler,
+    } = useForm(initialValues, ({ comment }) => {
+        createComment(gameId, comment);
+    });
 
     return (
         <section id="game-details">
@@ -44,16 +40,15 @@ export default function GameDetails() {
                 <div className="details-comments">
                     <h2>Comments:</h2>
                     <ul>
-                        {Object.keys(game.comments || {}).length > 0
-                            ? Object.values(game.comments).map(coment => (
-
+                        {comments.map(coment => (
                                 <li key={coment._id} className="comment">
-                                    <p>{coment.username}: {coment.text}</p>
+                                    <p>Username: {coment.text}</p>
                                 </li>
                             ))
-                            : <p className="no-comment">No comments.</p>
                         }
                     </ul>
+                    
+                    {comments.length === 0 && <p className="no-comment">No comments.</p>}
                 </div>
 
                 {/* <!-- Edit/Delete buttons ( Only for creator of this game )  --> */}
@@ -65,26 +60,22 @@ export default function GameDetails() {
 
             {/* <!-- Bonus -->
             <!-- Add Comment ( Only for logged-in users, which is not creators of the current game ) --> */}
-            <article className="create-comment">
-                <label>Add new comment:</label>
-                <form className="form" onSubmit={commentSubmittHandler}>
-                    <input
-                        type="text"
-                        placeholder="Pesho"
-                        name="username"
-                        onChange={(e) => setUsername(e.target.value)}
-                        value={username}
-                    />
-                    <textarea
-                        name="comment"
-                        placeholder="Comment......"
-                        onChange={(e) => setComment(e.target.value)}
-                        value={comment}
-                    ></textarea>
+            {isAuthenticated && (
+                <article className="create-comment">
+                    <label>Add new comment:</label>
+                    <form className="form" onSubmit={submitHandler}>
+                        <textarea
+                            name="comment"
+                            placeholder="Comment......"
+                            onChange={changeHandler}
+                            value={values.comment}
+                        ></textarea>
 
-                    <input className="btn submit" type="submit" value="Add Comment" />
-                </form>
-            </article>
+                        <input className="btn submit" type="submit" value="Add Comment" />
+                    </form>
+                </article>
+            )}
+
 
         </section>
     );

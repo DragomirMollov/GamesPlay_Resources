@@ -8,7 +8,7 @@ async function requester(method, url, data) {
 
     const accessToken = getAccessToken();
 
-    console.log('Access Token:', accessToken); // Debugging line
+    // console.log('Access Token:', accessToken); // Debugging line
 
     if (accessToken) {
         options.headers = {
