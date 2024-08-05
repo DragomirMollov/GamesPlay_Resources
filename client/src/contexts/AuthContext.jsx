@@ -27,7 +27,7 @@ export function AuthContextProvider(props) {
     };
 
     const contextData = {
-        userid: authState?._id,
+        userId: authState?._id,
         email: authState?.email,
         accessToken: authState?.accessToken,
         isAuthenticated: !!authState?.email,

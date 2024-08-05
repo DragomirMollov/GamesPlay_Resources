@@ -15,7 +15,7 @@ export default function GameDetails() {
     const [comments, dispatch] = useGetAllComents(gameId);
     // const [comments, setComments] = useGetAllComents(gameId);
     const createComment = useCreateComment();
-    const { email } = useAuthContext();
+    const { email, userId } = useAuthContext();
     const [game] = useGetOneGames(gameId);
     const { isAuthenticated } = useAuthContext();
     const {
@@ -27,11 +27,17 @@ export default function GameDetails() {
             const newComment = await createComment(gameId, comment);
 
             // setComments(oldComments => [...oldComments, newComment]);
-            dispatch({type: 'ADD_COMMENT', payload: {...newComment, author: { email }}});
+            dispatch({ type: 'ADD_COMMENT', payload: { ...newComment, author: { email } } });
         } catch (error) {
             setError(error.message);
         };
     });
+
+    const isOwner = userId === game._ownerId;
+    console.log(userId);
+    
+    
+    
 
     return (
         <section id="game-details">
@@ -52,10 +58,10 @@ export default function GameDetails() {
                     <h2>Comments:</h2>
                     <ul>
                         {comments.map(comment => (
-                                <li key={comment._id} className="comment">
-                                    <p>{comment.author.email}: {comment.text}</p>
-                                </li>
-                            ))
+                            <li key={comment._id} className="comment">
+                                <p>{comment.author.email}: {comment.text}</p>
+                            </li>
+                        ))
                         }
                     </ul>
 
@@ -63,10 +69,12 @@ export default function GameDetails() {
                 </div>
 
                 {/* <!-- Edit/Delete buttons ( Only for creator of this game )  --> */}
-                {/* <div className="buttons">
-                    <a href="#" className="button">Edit</a>
-                    <a href="#" className="button">Delete</a>
-                </div> */}
+                {isOwner && (
+                    <div className="buttons">
+                        <a href="#" className="button">Edit</a>
+                        <a href="#" className="button">Delete</a>
+                    </div>
+                )}
             </div>
 
             {/* <!-- Bonus -->
